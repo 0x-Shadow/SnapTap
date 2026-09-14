@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; style-src 'self' data:; script-src 'self'">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="preview-body">
+  <div id="preview-container">
+    <div id="preview-header">
+      <div id="header-left">
+        <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span id="preview-title">Screenshot</span>
+      </div>
+      <button id="close-btn">&times;</button>
+    </div>
+    <div id="preview-image-wrap">
+      <img id="preview-image" alt="Screenshot preview">
+      <div id="loading-shimmer" class="visible">
+        <div class="shimmer-bar"></div>
+        <div class="shimmer-text">Capturing...</div>
+      </div>
+    </div>
+    <div id="preview-actions">
+      <button id="copy-btn" class="action-btn">
+        <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span>Copy</span>
+      </button>
+      <button id="save-btn" class="action-btn secondary">
+        <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        <span>Save</span>
+      </button>
+      <span id="copy-status"></span>
+    </div>
+  </div>
+  <script src="preview.js"></script>
+</body>
+</html>
