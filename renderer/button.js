@@ -29,6 +29,14 @@ screenshotBtn.addEventListener('click', (e) => {
   window.screenshotAPI.takeScreenshot();
 });
 
+// Pulse animation on capture / copy — triggered from main process
+window.screenshotAPI.onPulse(() => {
+  screenshotBtn.classList.remove('capturing');
+  void screenshotBtn.offsetWidth; // restart animation
+  screenshotBtn.classList.add('capturing');
+  setTimeout(() => screenshotBtn.classList.remove('capturing'), 650);
+});
+
 galleryBtn.addEventListener('click', (e) => {
   if (isDragging) return;
   window.screenshotAPI.openGallery();

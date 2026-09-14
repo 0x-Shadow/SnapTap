@@ -168,6 +168,12 @@ function sendGalleryImages() {
   }
 }
 
+function pulseButton() {
+  if (buttonWindow && !buttonWindow.isDestroyed()) {
+    buttonWindow.webContents.send('pulse-button');
+  }
+}
+
 // ─── Capture ───
 async function captureScreen() {
   if (isCapturing) return;
@@ -200,6 +206,10 @@ async function captureScreen() {
     const filePath = path.join(folder, filename);
     const buffer = image.toPNG();
     fs.writeFileSync(filePath, buffer);
+
+    // Auto-copy to clipboard for fast paste workflow
+    clipboard.writeImage(image);
+    pulseButton();
 
     createPreviewWindow(dataURL);
     sendGalleryImages();
@@ -253,6 +263,7 @@ app.whenReady().then(() => {
     try {
       const image = nativeImage.createFromDataURL(dataURL);
       clipboard.writeImage(image);
+      pulseButton();
       if (previewWindow && !previewWindow.isDestroyed()) {
         previewWindow.close();
         previewWindow = null;
@@ -319,6 +330,7 @@ app.whenReady().then(() => {
         const buffer = fs.readFileSync(filePath);
         const image = nativeImage.createFromBuffer(buffer);
         clipboard.writeImage(image);
+        pulseButton();
       }
     } catch (err) {
       console.error('Copy from gallery failed:', err.message);
@@ -330,6 +342,7 @@ app.whenReady().then(() => {
     try {
       const image = nativeImage.createFromDataURL(dataURL);
       clipboard.writeImage(image);
+      pulseButton();
     } catch (err) {
       console.error('Copy failed:', err.message);
     }

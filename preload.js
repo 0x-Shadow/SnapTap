@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('screenshotAPI', {
   copyDataURLToClipboard: (dataURL) => ipcRenderer.send('copy-dataurl-to-clipboard', dataURL),
   getSnapTapFolder: () => ipcRenderer.sendSync('get-snaptap-folder'),
   onScreenshot: (cb) => ipcRenderer.on('show-screenshot', (e, d) => cb(d)),
-  onLoadGallery: (cb) => ipcRenderer.on('load-gallery', (e, images) => cb(images))
+  onLoadGallery: (cb) => ipcRenderer.on('load-gallery', (e, images) => cb(images)),
+  onPulse: (cb) => ipcRenderer.on('pulse-button', () => cb())
 });
