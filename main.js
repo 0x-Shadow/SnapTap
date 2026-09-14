@@ -265,17 +265,12 @@ app.whenReady().then(() => {
   ipcMain.on('save-screenshot', (event, dataURL) => {
     if (typeof dataURL !== 'string' || !dataURL.startsWith('data:image/png;base64,')) return;
     try {
-      const { dialog } = require('electron');
       const image = nativeImage.createFromDataURL(dataURL);
-      dialog.showSaveDialog(buttonWindow, {
-        title: 'Save Screenshot',
-        defaultPath: `snap-${Date.now()}.png`,
-        filters: [{ name: 'PNG', extensions: ['png'] }]
-      }).then(result => {
-        if (!result.canceled && result.filePath) {
-          fs.writeFileSync(result.filePath, image.toPNG());
-        }
-      });
+      const folder = getSnapTapFolder();
+      const filename = `snap-${Date.now()}.png`;
+      const filePath = path.join(folder, filename);
+      fs.writeFileSync(filePath, image.toPNG());
+      sendGalleryImages();
     } catch (err) {
       console.error('Save failed:', err.message);
     }
