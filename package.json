@@ -1,6 +1,6 @@
 {
   "name": "snaptap",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Lightweight floating screenshot tool for Windows. Capture your screen with Alt+S, copy to clipboard instantly, and browse your gallery with Alt+G.",
   "main": "main.js",
   "author": "nikol",

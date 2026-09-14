@@ -30,6 +30,30 @@ function getGalleryImages() {
     });
 }
 
+// ─── Settings (persisted in userData/settings.json) ───
+const DEFAULT_SETTINGS = { fullResolution: false, captureDisplay: 'cursor' };
+
+function getSettingsPath() {
+  return path.join(app.getPath('userData'), 'settings.json');
+}
+
+function getSettings() {
+  try {
+    const raw = fs.readFileSync(getSettingsPath(), 'utf8');
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch {
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+function saveSettings(settings) {
+  try {
+    fs.writeFileSync(getSettingsPath(), JSON.stringify(settings, null, 2));
+  } catch (err) {
+    console.error('Save settings failed:', err.message);
+  }
+}
+
 function isSafeFilename(filename) {
   if (typeof filename !== 'string') return false;
   if (filename.length === 0 || filename.length > 100) return false;
@@ -175,17 +199,37 @@ function pulseButton() {
 }
 
 // ─── Capture ───
+function getCaptureDisplay() {
+  const settings = getSettings();
+  if (settings.captureDisplay && settings.captureDisplay !== 'cursor') {
+    const picked = screen.getAllDisplays().find(d =>
+      String(d.id) === String(settings.captureDisplay)
+    );
+    if (picked) return picked;
+  }
+  return screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+}
+
 async function captureScreen() {
   if (isCapturing) return;
   isCapturing = true;
 
   try {
-    const primaryDisplay = screen.getPrimaryDisplay();
+    const targetDisplay = getCaptureDisplay();
+    const settings = getSettings();
     const { desktopCapturer } = require('electron');
+
+    const scale = targetDisplay.scaleFactor || 1;
+    const thumbnailSize = settings.fullResolution
+      ? {
+          width: Math.floor(targetDisplay.size.width * scale),
+          height: Math.floor(targetDisplay.size.height * scale)
+        }
+      : { width: 1920, height: 1080 };
 
     const sources = await desktopCapturer.getSources({
       types: ['screen'],
-      thumbnailSize: { width: 1920, height: 1080 }
+      thumbnailSize
     });
 
     if (!sources || sources.length === 0) {
@@ -194,7 +238,7 @@ async function captureScreen() {
     }
 
     const source = sources.find(s =>
-      String(s.display_id) === String(primaryDisplay.id)
+      String(s.display_id) === String(targetDisplay.id)
     ) || sources[0];
 
     const image = source.thumbnail;
@@ -233,9 +277,44 @@ function createTray() {
 }
 
 function updateTrayMenu() {
+  const settings = getSettings();
+  const displays = screen.getAllDisplays();
+
+  const displayOptions = [
+    {
+      label: 'Display under cursor',
+      type: 'radio',
+      checked: settings.captureDisplay === 'cursor',
+      click: () => {
+        saveSettings({ ...getSettings(), captureDisplay: 'cursor' });
+        updateTrayMenu();
+      }
+    },
+    { type: 'separator' },
+    ...displays.map((d, i) => ({
+      label: `Display ${i + 1} (${d.size.width}x${d.size.height})${d.id === screen.getPrimaryDisplay().id ? ' — Primary' : ''}`,
+      type: 'radio',
+      checked: String(settings.captureDisplay) === String(d.id),
+      click: () => {
+        saveSettings({ ...getSettings(), captureDisplay: String(d.id) });
+        updateTrayMenu();
+      }
+    }))
+  ];
+
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Screenshot (Alt+S)', click: captureScreen },
     { label: 'Gallery (Alt+G)', click: createGalleryWindow },
+    { type: 'separator' },
+    {
+      label: 'Full resolution capture',
+      type: 'checkbox',
+      checked: settings.fullResolution,
+      click: (item) => {
+        saveSettings({ ...getSettings(), fullResolution: item.checked });
+      }
+    },
+    { label: 'Capture display', submenu: displayOptions },
     { type: 'separator' },
     { label: `Snapshots: ${getGalleryImages().length}`, enabled: false },
     { type: 'separator' },
@@ -247,6 +326,10 @@ function updateTrayMenu() {
 app.whenReady().then(() => {
   createButtonWindow();
   createTray();
+
+  screen.on('display-added', updateTrayMenu);
+  screen.on('display-removed', updateTrayMenu);
+  screen.on('display-metrics-changed', updateTrayMenu);
 
   globalShortcut.register('Alt+S', captureScreen);
   globalShortcut.register('Alt+G', createGalleryWindow);

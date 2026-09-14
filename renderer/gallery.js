@@ -2,6 +2,30 @@ const grid = document.getElementById('gallery-grid');
 const count = document.getElementById('gallery-count');
 const closeBtn = document.getElementById('gallery-close');
 const emptyState = document.getElementById('gallery-empty');
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightbox-image');
+const lightboxTitle = document.getElementById('lightbox-title');
+const lightboxTime = document.getElementById('lightbox-time');
+const lightboxClose = document.getElementById('lightbox-close');
+const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+const lightboxCopy = document.getElementById('lightbox-copy');
+const lightboxDelete = document.getElementById('lightbox-delete');
+let lightboxFile = null;
+
+function openLightbox(filename) {
+  if (!/^snap-\d+\.png$/.test(filename)) return;
+  lightboxFile = filename;
+  lightboxImage.src = getImageSrc(filename);
+  lightboxTitle.textContent = filename;
+  lightboxTime.textContent = formatTimestamp(filename);
+  lightbox.classList.remove('hidden');
+}
+
+function closeLightbox() {
+  lightbox.classList.add('hidden');
+  lightboxImage.removeAttribute('src');
+  lightboxFile = null;
+}
 
 function sanitize(str) {
   const div = document.createElement('div');
@@ -66,6 +90,10 @@ function renderGallery(images) {
     `;
     grid.appendChild(el);
 
+    el.querySelector('.gallery-thumb').addEventListener('click', () => {
+      openLightbox(filename);
+    });
+
     el.querySelector('.gallery-copy').addEventListener('click', (e) => {
       e.stopPropagation();
       window.screenshotAPI.copyFromGallery(filename);
@@ -93,9 +121,29 @@ closeBtn.addEventListener('click', () => {
   window.screenshotAPI.closeGallery();
 });
 
+lightboxClose.addEventListener('click', closeLightbox);
+lightboxBackdrop.addEventListener('click', closeLightbox);
+
+lightboxCopy.addEventListener('click', () => {
+  if (!lightboxFile) return;
+  window.screenshotAPI.copyFromGallery(lightboxFile);
+  lightboxCopy.classList.add('copied');
+  setTimeout(() => lightboxCopy.classList.remove('copied'), 1200);
+});
+
+lightboxDelete.addEventListener('click', () => {
+  if (!lightboxFile) return;
+  window.screenshotAPI.deleteImage(lightboxFile);
+  closeLightbox();
+});
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    window.screenshotAPI.closeGallery();
+    if (!lightbox.classList.contains('hidden')) {
+      closeLightbox();
+    } else {
+      window.screenshotAPI.closeGallery();
+    }
   }
 });
 

@@ -8,8 +8,11 @@ A lightweight, always-on-top floating screenshot tool for Windows. Capture your 
 
 - **Floating button** — stays on top of all windows, always accessible
 - **One-click capture** — click the camera button or press `Alt+S`
+- **Auto-copy** — every screenshot goes straight to clipboard, just paste
+- **Full-resolution option** — tray toggle for pixel-perfect captures
+- **Multi-monitor support** — captures the display under your cursor, or pick one from the tray
 - **Disk storage** — screenshots auto-save to `Pictures/SnapTap/`
-- **Gallery** — browse all screenshots with thumbnails, copy, and delete
+- **Gallery** — browse all screenshots, click any thumbnail to enlarge, copy, or delete
 - **Instant copy** — copy any screenshot to clipboard with one click
 - **Save as PNG** — export any capture as a file
 - **Global shortcuts** — `Alt+S` capture, `Alt+G` open gallery
@@ -69,11 +72,16 @@ npm run build:portable
 ## How it works
 
 1. Two buttons float on the right edge of your screen (camera + gallery)
-2. Click the camera (or press `Alt+S`) to capture your screen
-3. A preview appears with Copy and Save options
-4. Screenshot is automatically saved to `Pictures/SnapTap/`
+2. Click the camera (or press `Alt+S`) to capture the display under your cursor
+3. The screenshot is saved to `Pictures/SnapTap/` **and** copied to clipboard instantly
+4. A preview appears with Copy and Save options
 5. Click the gallery button (or press `Alt+G`) to browse all captures
-6. Copy or delete any screenshot from the gallery
+6. Click any thumbnail to enlarge it, then copy or delete
+
+### Settings (tray icon, right-click)
+
+- **Full resolution capture** — capture at native display resolution instead of 1080p
+- **Capture display** — "Display under cursor" (default) or lock to a specific monitor
 
 ## Screenshots
 

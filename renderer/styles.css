@@ -514,6 +514,15 @@ body {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
+  cursor: zoom-in;
+}
+
+.gallery-thumb:hover img {
+  transform: scale(1.03);
+}
+
+.gallery-thumb img {
+  transition: transform 0.15s ease;
 }
 
 .gallery-thumb img {
@@ -581,4 +590,106 @@ body {
 .gallery-delete:hover {
   background: rgba(255, 69, 58, 0.2);
   color: rgba(255, 69, 58, 0.9);
+}
+
+/* ========== LIGHTBOX ========== */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#lightbox.hidden {
+  display: none;
+}
+
+#lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: zoom-out;
+}
+
+#lightbox-content {
+  position: relative;
+  width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(18, 18, 22, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+}
+
+#lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+#lightbox-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#lightbox-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 20px;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  transition: all 0.12s ease;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+#lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#lightbox-image {
+  width: 100%;
+  max-height: 330px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+#lightbox-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 10px;
+  flex-shrink: 0;
+}
+
+#lightbox-time {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+#lightbox-actions {
+  display: flex;
+  gap: 6px;
 }
