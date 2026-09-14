@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, clipboard, screen, nativeImage, Tray, Menu } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, clipboard, screen, nativeImage, Tray, Menu, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -92,54 +92,91 @@ function createButtonWindow() {
   buttonWindow.setVisibleOnAllWorkspaces(true);
 }
 
-// ─── Preview Window ───
-function createPreviewWindow(imageDataURL) {
-  if (previewWindow && !previewWindow.isDestroyed()) {
-    previewWindow.close();
-  }
+// ─── Preview Window (single instance, reused — never churned) ───
+let previewReady = false;
+let pendingPreviewPath = null;
 
-  const btnBounds = buttonWindow.getBounds();
+function sendToPreview(filePath) {
+  if (!previewWindow || previewWindow.isDestroyed() || !previewReady) return false;
+  try {
+    previewWindow.webContents.send('show-screenshot', filePath);
+    return true;
+  } catch {
+    return false; // window died mid-send — caller recreates
+  }
+}
+
+function showInPreview(filePath) {
+  pendingPreviewPath = filePath;
+  // Reuse the existing window if alive — avoids destroy/recreate churn on spam
+  if (previewWindow && !previewWindow.isDestroyed()) {
+    if (sendToPreview(filePath)) pendingPreviewPath = null;
+    return;
+  }
+  createPreviewWindow();
+}
+
+function createPreviewWindow() {
   const previewWidth = 360;
   const previewHeight = 300;
-  const { width: screenWidth } = screen.getPrimaryDisplay().workAreaSize;
+  const workArea = screen.getPrimaryDisplay().workAreaSize;
 
-  let x = btnBounds.x - previewWidth - 15;
-  let y = btnBounds.y - Math.floor(previewHeight / 2) + 45;
-
-  if (x < 10) x = btnBounds.x + 60;
-  if (y < 10) y = 10;
-  if (y + previewHeight > screen.getPrimaryDisplay().workAreaSize.height) {
-    y = screen.getPrimaryDisplay().workAreaSize.height - previewHeight - 10;
+  let x;
+  let y;
+  try {
+    if (!buttonWindow || buttonWindow.isDestroyed()) throw new Error('no button');
+    const btnBounds = buttonWindow.getBounds();
+    x = btnBounds.x - previewWidth - 15;
+    y = btnBounds.y - Math.floor(previewHeight / 2) + 45;
+    if (x < 10) x = btnBounds.x + 60;
+    if (y < 10) y = 10;
+    if (y + previewHeight > workArea.height) y = workArea.height - previewHeight - 10;
+  } catch {
+    // Button window gone — center on screen instead of crashing
+    x = Math.floor(workArea.width / 2) - Math.floor(previewWidth / 2);
+    y = Math.floor(workArea.height / 2) - Math.floor(previewHeight / 2);
   }
 
-  previewWindow = new BrowserWindow({
-    width: previewWidth,
-    height: previewHeight,
-    x, y,
-    frame: false,
-    transparent: true,
-    alwaysOnTop: true,
-    resizable: false,
-    skipTaskbar: true,
-    hasShadow: true,
-    title: 'SnapTap',
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true
-    }
-  });
+  previewReady = false;
+  try {
+    previewWindow = new BrowserWindow({
+      width: previewWidth,
+      height: previewHeight,
+      x, y,
+      frame: false,
+      transparent: true,
+      alwaysOnTop: true,
+      resizable: false,
+      skipTaskbar: true,
+      hasShadow: true,
+      title: 'SnapTap',
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: true
+      }
+    });
+  } catch (err) {
+    console.error('Preview window failed:', err.message);
+    previewWindow = null;
+    return;
+  }
 
   previewWindow.loadFile(path.join(__dirname, 'renderer', 'preview.html'));
   previewWindow.setVisibleOnAllWorkspaces(true);
 
   previewWindow.webContents.once('did-finish-load', () => {
-    previewWindow.webContents.send('show-screenshot', imageDataURL);
+    previewReady = true;
+    if (pendingPreviewPath) {
+      sendToPreview(pendingPreviewPath);
+      pendingPreviewPath = null;
+    }
   });
 
   previewWindow.on('closed', () => {
     previewWindow = null;
+    previewReady = false;
   });
 }
 
@@ -187,14 +224,21 @@ function createGalleryWindow() {
 
 function sendGalleryImages() {
   if (galleryWindow && !galleryWindow.isDestroyed()) {
-    const images = getGalleryImages();
-    galleryWindow.webContents.send('load-gallery', images);
+    try {
+      galleryWindow.webContents.send('load-gallery', getGalleryImages());
+    } catch {
+      // window died mid-send — harmless, it reloads on next open
+    }
   }
 }
 
 function pulseButton() {
   if (buttonWindow && !buttonWindow.isDestroyed()) {
-    buttonWindow.webContents.send('pulse-button');
+    try {
+      buttonWindow.webContents.send('pulse-button');
+    } catch {
+      // best-effort feedback only
+    }
   }
 }
 
@@ -210,8 +254,14 @@ function getCaptureDisplay() {
   return screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
 }
 
+const MIN_CAPTURE_INTERVAL_MS = 800; // ignore spam-clicks faster than this
+let lastCaptureAt = 0;
+let lastCapturePath = null; // file backing the current preview (copy/reveal target)
+
 async function captureScreen() {
-  if (isCapturing) return;
+  const now = Date.now();
+  if (isCapturing || now - lastCaptureAt < MIN_CAPTURE_INTERVAL_MS) return;
+  lastCaptureAt = now;
   isCapturing = true;
 
   try {
@@ -244,18 +294,18 @@ async function captureScreen() {
     const image = source.thumbnail;
     if (image.isEmpty()) { isCapturing = false; return; }
 
-    const dataURL = image.toDataURL();
     const folder = getSnapTapFolder();
     const filename = `snap-${Date.now()}.png`;
     const filePath = path.join(folder, filename);
-    const buffer = image.toPNG();
-    fs.writeFileSync(filePath, buffer);
+    fs.writeFileSync(filePath, image.toPNG());
+    lastCapturePath = filePath;
 
     // Auto-copy to clipboard for fast paste workflow
     clipboard.writeImage(image);
     pulseButton();
 
-    createPreviewWindow(dataURL);
+    // Pass only the file path over IPC — never multi-MB image data
+    showInPreview(filePath);
     sendGalleryImages();
   } catch (err) {
     console.error('Capture failed:', err.message);
@@ -341,10 +391,13 @@ app.whenReady().then(() => {
     event.returnValue = getSnapTapFolder();
   });
 
-  ipcMain.on('copy-to-clipboard', (event, dataURL) => {
-    if (typeof dataURL !== 'string' || !dataURL.startsWith('data:image/png;base64,')) return;
+  // Copies the last capture straight from disk — no image data crosses IPC
+  ipcMain.on('copy-to-clipboard', () => {
+    if (!lastCapturePath) return;
     try {
-      const image = nativeImage.createFromDataURL(dataURL);
+      if (!fs.existsSync(lastCapturePath)) return;
+      const image = nativeImage.createFromBuffer(fs.readFileSync(lastCapturePath));
+      if (image.isEmpty()) return;
       clipboard.writeImage(image);
       pulseButton();
       if (previewWindow && !previewWindow.isDestroyed()) {
@@ -356,17 +409,14 @@ app.whenReady().then(() => {
     }
   });
 
-  ipcMain.on('save-screenshot', (event, dataURL) => {
-    if (typeof dataURL !== 'string' || !dataURL.startsWith('data:image/png;base64,')) return;
+  // Captures already auto-save — this just reveals the file in Explorer
+  ipcMain.on('reveal-in-folder', () => {
+    if (!lastCapturePath) return;
     try {
-      const image = nativeImage.createFromDataURL(dataURL);
-      const folder = getSnapTapFolder();
-      const filename = `snap-${Date.now()}.png`;
-      const filePath = path.join(folder, filename);
-      fs.writeFileSync(filePath, image.toPNG());
-      sendGalleryImages();
+      if (!fs.existsSync(lastCapturePath)) return;
+      shell.showItemInFolder(path.resolve(lastCapturePath));
     } catch (err) {
-      console.error('Save failed:', err.message);
+      console.error('Reveal failed:', err.message);
     }
   });
 
@@ -396,6 +446,7 @@ app.whenReady().then(() => {
       const filePath = path.join(folder, filename);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
+        if (lastCapturePath === filePath) lastCapturePath = null;
         sendGalleryImages();
         updateTrayMenu();
       }
@@ -420,17 +471,35 @@ app.whenReady().then(() => {
     }
   });
 
-  ipcMain.on('copy-dataurl-to-clipboard', (event, dataURL) => {
-    if (typeof dataURL !== 'string' || !dataURL.startsWith('data:image/png;base64,')) return;
-    try {
-      const image = nativeImage.createFromDataURL(dataURL);
-      clipboard.writeImage(image);
-      pulseButton();
-    } catch (err) {
-      console.error('Copy failed:', err.message);
-    }
-  });
 });
 
 app.on('window-all-closed', (e) => e.preventDefault());
 app.on('will-quit', () => globalShortcut.unregisterAll());
+
+// ─── Crash containment: log and recover instead of dying ───
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception (contained):', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection (contained):', reason);
+});
+
+app.on('render-process-gone', (event, webContents, details) => {
+  console.error('Renderer gone:', details && details.reason);
+  if (buttonWindow && webContents === buttonWindow.webContents) {
+    // Main UI died — rebuild it so the app stays usable
+    try { buttonWindow.destroy(); } catch { /* already dead */ }
+    buttonWindow = null;
+    try {
+      createButtonWindow();
+    } catch (err) {
+      console.error('Button rebuild failed:', err.message);
+    }
+  } else if (previewWindow && webContents === previewWindow.webContents) {
+    previewWindow = null;
+    previewReady = false;
+  } else if (galleryWindow && webContents === galleryWindow.webContents) {
+    galleryWindow = null;
+  }
+});

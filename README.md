@@ -56,7 +56,7 @@ npm run build:portable
 | Take screenshot | Click the camera button or press `Alt+S` |
 | Open gallery | Click the grid button or press `Alt+G` |
 | Copy screenshot | Click Copy in the preview, or `Ctrl+C` |
-| Save to file | Click Save in the preview window |
+| Show file in folder | Click Folder in the preview window |
 | Reposition button | Drag the floating buttons up or down |
 | Close any popup | Press `Escape` |
 
@@ -74,7 +74,7 @@ npm run build:portable
 1. Two buttons float on the right edge of your screen (camera + gallery)
 2. Click the camera (or press `Alt+S`) to capture the display under your cursor
 3. The screenshot is saved to `Pictures/SnapTap/` **and** copied to clipboard instantly
-4. A preview appears with Copy and Save options
+4. A preview appears with Copy and Folder options (captures are throttled so spam-clicking can't crash the app)
 5. Click the gallery button (or press `Alt+G`) to browse all captures
 6. Click any thumbnail to enlarge it, then copy or delete
 
@@ -105,6 +105,7 @@ Screenshots are stored at:
 - **Input validation** — Filenames and data validated before processing
 - **Path traversal protection** — File operations restricted to SnapTap folder
 - **XSS prevention** — User content sanitized before DOM insertion
+- **Crash containment** — capture throttling, single reused preview window, file-path IPC (no multi-MB payloads), auto-recovery if a renderer dies
 - **No network requests** — Fully offline, zero telemetry
 
 ## Privacy
