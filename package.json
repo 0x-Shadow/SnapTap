@@ -1,6 +1,6 @@
 {
   "name": "snaptap",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Lightweight floating screenshot tool for Windows. Capture your screen with Alt+S, copy to clipboard instantly, and browse your gallery with Alt+G.",
   "main": "main.js",
   "author": "0x-Shadow",
@@ -52,11 +52,15 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.ico",
@@ -77,7 +81,7 @@
     }
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.1.8"
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3"
   }
 }

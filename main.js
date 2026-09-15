@@ -21,13 +21,21 @@ function getSnapTapFolder() {
 function getGalleryImages() {
   const folder = getSnapTapFolder();
   if (!fs.existsSync(folder)) return [];
-  return fs.readdirSync(folder)
-    .filter(f => f.endsWith('.png') && /^snap-\d+\.png$/.test(f))
-    .sort((a, b) => {
-      const statA = fs.statSync(path.join(folder, a));
-      const statB = fs.statSync(path.join(folder, b));
-      return statB.mtimeMs - statA.mtimeMs;
-    });
+  let files = [];
+  try {
+    files = fs.readdirSync(folder)
+      .filter(f => f.endsWith('.png') && /^snap-\d+\.png$/.test(f));
+  } catch {
+    return [];
+  }
+  // statSync can throw if a file vanishes mid-listing (TOCTOU) — drop it, don't crash
+  const withTime = [];
+  for (const f of files) {
+    try {
+      withTime.push({ f, t: fs.statSync(path.join(folder, f)).mtimeMs });
+    } catch { /* raced deletion — skip */ }
+  }
+  return withTime.sort((a, b) => b.t - a.t).map(x => x.f);
 }
 
 // ─── Settings (persisted in userData/settings.json) ───
@@ -327,6 +335,15 @@ function createTray() {
 }
 
 function updateTrayMenu() {
+  if (!tray || tray.isDestroyed()) return;
+  try {
+    buildTrayMenu();
+  } catch (err) {
+    console.error('Tray menu failed:', err.message);
+  }
+}
+
+function buildTrayMenu() {
   const settings = getSettings();
   const displays = screen.getAllDisplays();
 
