@@ -5,6 +5,31 @@
   "main": "main.js",
   "author": "nikol",
   "license": "MIT",
+  "homepage": "https://github.com/0x-Shadow/SnapTap",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0x-Shadow/SnapTap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0x-Shadow/SnapTap/issues"
+  },
+  "keywords": [
+    "screenshot",
+    "screen-capture",
+    "electron",
+    "windows",
+    "clipboard",
+    "snipping",
+    "productivity"
+  ],
+  "files": [
+    "main.js",
+    "preload.js",
+    "renderer/**/*",
+    "assets/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",

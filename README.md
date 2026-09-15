@@ -1,8 +1,19 @@
-# SnapTap
+<p align="center">
+  <img src="https://raw.githubusercontent.com/0x-Shadow/SnapTap/main/assets/SnapTap.png" alt="SnapTap logo" width="160">
+</p>
 
-A lightweight, always-on-top floating screenshot tool for Windows. Capture your screen with one click or keyboard shortcut, instantly save to disk, and browse your gallery.
+<h1 align="center">SnapTap</h1>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<p align="center">
+  A lightweight, always-on-top floating screenshot tool for Windows.<br>
+  Capture your screen with one click or keyboard shortcut, instantly save to disk, and browse your gallery.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/Platform-Windows-0078D6.svg" alt="Platform: Windows">
+  <img src="https://img.shields.io/badge/Electron-33-47848F.svg" alt="Electron 33">
+</p>
 
 ## Features
 
