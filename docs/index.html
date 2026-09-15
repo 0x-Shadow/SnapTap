@@ -47,24 +47,105 @@
       </div>
     </section>
 
-    <!-- ============ LIVE DEMO ============ -->
+    <!-- ============ PRODUCT TOUR ============ -->
     <section class="chapter" id="demo">
-      <div class="wrap demo-center">
-        <div class="demo-stage reveal" id="demoStage">
-          <div class="demo-flash" id="demoFlash" aria-hidden="true"></div>
-          <div class="demo-buttons">
-            <button class="demo-btn" id="demoCapture" title="Take screenshot">
-              <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              <span class="demo-pulse" aria-hidden="true"></span>
-            </button>
-            <button class="demo-btn" title="Open gallery">
-              <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            </button>
+      <div class="wrap">
+        <p class="eyebrow reveal">See how it works</p>
+        <h2 class="reveal" data-delay="1">Three steps. Two seconds.</h2>
+        <div class="tour reveal" data-delay="2">
+          <ol class="tour-steps">
+            <li class="tour-step active" data-step="0">
+              <button type="button">
+                <span class="tour-num">01</span>
+                <span class="tour-text"><strong>Press Alt+S.</strong> <span class="tour-desc">Captures the display under your cursor.</span></span>
+              </button>
+              <span class="tour-progress" aria-hidden="true"><span></span></span>
+            </li>
+            <li class="tour-step" data-step="1">
+              <button type="button">
+                <span class="tour-num">02</span>
+                <span class="tour-text"><strong>Already copied.</strong> <span class="tour-desc">Saved to disk and on your clipboard instantly.</span></span>
+              </button>
+              <span class="tour-progress" aria-hidden="true"><span></span></span>
+            </li>
+            <li class="tour-step" data-step="2">
+              <button type="button">
+                <span class="tour-num">03</span>
+                <span class="tour-text"><strong>Everything, kept.</strong> <span class="tour-desc">Enlarge, re-copy, or delete any shot.</span></span>
+              </button>
+              <span class="tour-progress" aria-hidden="true"><span></span></span>
+            </li>
+          </ol>
+
+          <div class="tour-stage" id="tourStage">
+            <!-- Step 1: floating buttons -->
+            <div class="tour-panel active" data-panel="0">
+              <div class="mock-buttons">
+                <span class="mock-btn mock-btn-pulse">
+                  <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="mock-pulse" aria-hidden="true"></span>
+                </span>
+                <span class="mock-btn">
+                  <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </span>
+              </div>
+              <p class="tour-hint"><kbd>Alt</kbd> + <kbd>S</kbd> from anywhere</p>
+            </div>
+
+            <!-- Step 2: preview popup -->
+            <div class="tour-panel" data-panel="1">
+              <div class="mock-preview">
+                <div class="mock-preview-head">
+                  <span class="mock-preview-title">Screenshot</span>
+                  <span class="mock-x">&times;</span>
+                </div>
+                <div class="mock-shot">
+                  <div class="mock-browser">
+                    <div class="mock-bar"><i></i><i></i><i></i><span class="mock-url"></span></div>
+                    <div class="mock-lines"><i style="width:82%"></i><i style="width:64%"></i><i class="blue" style="width:45%"></i><i style="width:71%"></i></div>
+                  </div>
+                </div>
+                <div class="mock-actions">
+                  <span class="mock-copy">Copied ✓</span>
+                  <span class="mock-folder">Folder</span>
+                  <span class="mock-status">Closing…</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: gallery -->
+            <div class="tour-panel" data-panel="2">
+              <div class="mock-gallery">
+                <div class="mock-gal-head">
+                  <span class="mock-gal-title">SnapTap Gallery</span>
+                  <span class="mock-gal-right"><span class="mock-count">4</span><span class="mock-x">&times;</span></span>
+                </div>
+                <div class="mock-grid">
+                  <div class="mock-item">
+                    <span class="mock-thumb" style="background:linear-gradient(135deg,#1b2a4a,#0b0b0e)"></span>
+                    <span class="mock-meta"><span>snap-01.png</span><span>14:02:11</span></span>
+                    <span class="mock-tools"><button class="mock-mini-copy" type="button" title="Copy"></button><button class="mock-mini-del" type="button" title="Delete"></button></span>
+                  </div>
+                  <div class="mock-item">
+                    <span class="mock-thumb" style="background:linear-gradient(135deg,#2a1b3d,#0b0b0e)"></span>
+                    <span class="mock-meta"><span>snap-02.png</span><span>13:47:03</span></span>
+                    <span class="mock-tools"><button class="mock-mini-copy" type="button" title="Copy"></button><button class="mock-mini-del" type="button" title="Delete"></button></span>
+                  </div>
+                  <div class="mock-item">
+                    <span class="mock-thumb" style="background:linear-gradient(135deg,#123a34,#0b0b0e)"></span>
+                    <span class="mock-meta"><span>snap-03.png</span><span>13:12:56</span></span>
+                    <span class="mock-tools"><button class="mock-mini-copy" type="button" title="Copy"></button><button class="mock-mini-del" type="button" title="Delete"></button></span>
+                  </div>
+                  <div class="mock-item">
+                    <span class="mock-thumb" style="background:linear-gradient(135deg,#4a2c14,#0b0b0e)"></span>
+                    <span class="mock-meta"><span>snap-04.png</span><span>12:58:40</span></span>
+                    <span class="mock-tools"><button class="mock-mini-copy" type="button" title="Copy"></button><button class="mock-mini-del" type="button" title="Delete"></button></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="demo-strip" id="demoStrip" aria-live="polite"></div>
-          <div class="demo-toast" id="demoToast">Copied to clipboard</div>
         </div>
-        <p class="caption reveal">A live mock of the app, recreated in code. Click the camera — or press <kbd>S</kbd>.</p>
       </div>
     </section>
 

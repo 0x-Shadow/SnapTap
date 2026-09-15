@@ -19,8 +19,8 @@
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
-  /* ---------- demo stage drifts gently with scroll ---------- */
-  var stage = document.getElementById('demoStage');
+  /* ---------- tour stage drifts gently with scroll ---------- */
+  var stage = document.getElementById('tourStage');
   if (stage && !reduceMotion) {
     var scheduled = false;
     function parallax() {
@@ -28,9 +28,8 @@
       var r = stage.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) return;
       var offset = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
-      var y = Math.max(-1, Math.min(1, offset)) * -34;
-      var s = 1 - Math.min(0.05, Math.abs(offset) * 0.05);
-      stage.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(3) + ')';
+      var y = Math.max(-1, Math.min(1, offset)) * -30;
+      stage.style.transform = 'translateY(' + y.toFixed(1) + 'px)';
     }
     window.addEventListener('scroll', function () {
       if (!scheduled) {
@@ -41,65 +40,63 @@
     parallax();
   }
 
-  /* ---------- interactive capture demo ---------- */
-  var flash = document.getElementById('demoFlash');
-  var captureBtn = document.getElementById('demoCapture');
-  var strip = document.getElementById('demoStrip');
-  var toast = document.getElementById('demoToast');
+  /* ---------- product tour: auto-playing steps ---------- */
+  var DURATION = 4500;
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.tour-step'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.tour-panel'));
+  var current = 0;
+  var timer = null;
 
-  var shots = [
-    'linear-gradient(135deg, #1b2a4a 0%, #0e1526 60%, #0b0b0e 100%)',
-    'linear-gradient(135deg, #2a1b3d 0%, #171226 60%, #0b0b0e 100%)',
-    'linear-gradient(135deg, #123a34 0%, #0e2422 60%, #0b0b0e 100%)',
-    'linear-gradient(135deg, #4a2c14 0%, #26180e 60%, #0b0b0e 100%)',
-    'linear-gradient(135deg, #3d1b26 0%, #230f16 60%, #0b0b0e 100%)'
-  ];
-  var shotIndex = 0;
-  var shotCount = 0;
-  var busy = false;
-  var toastTimer = null;
-
-  function fakeCapture() {
-    if (busy) return; // throttle like the real app
-    busy = true;
-
-    flash.classList.remove('go');
-    void flash.offsetWidth;
-    flash.classList.add('go');
-
-    captureBtn.classList.remove('firing');
-    void captureBtn.offsetWidth;
-    captureBtn.classList.add('firing');
-
-    setTimeout(function () {
-      shotCount++;
-      var thumb = document.createElement('div');
-      thumb.className = 'demo-thumb fresh';
-      thumb.style.background = shots[shotIndex % shots.length];
-      thumb.textContent = 'snap-' + String(shotCount).padStart(2, '0');
-      strip.querySelectorAll('.fresh').forEach(function (el) { el.classList.remove('fresh'); });
-      strip.prepend(thumb);
-      while (strip.children.length > 4) strip.removeChild(strip.lastChild);
-      shotIndex++;
-
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1600);
-
-      setTimeout(function () { busy = false; }, 350);
-    }, reduceMotion ? 0 : 180);
+  function show(i) {
+    current = (i + steps.length) % steps.length;
+    steps.forEach(function (s, k) {
+      var bar = s.querySelector('.tour-progress > span');
+      s.classList.remove('active');
+      if (bar && !reduceMotion) {
+        bar.style.animation = 'none';
+        void bar.offsetWidth; // restart the progress animation
+        bar.style.animation = '';
+        bar.style.animationDuration = DURATION + 'ms';
+      }
+      if (k === current) s.classList.add('active');
+    });
+    panels.forEach(function (p, k) {
+      p.classList.toggle('active', k === current);
+    });
   }
 
-  captureBtn.addEventListener('click', fakeCapture);
-  document.addEventListener('keydown', function (e) {
-    if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      var tag = (document.activeElement && document.activeElement.tagName) || '';
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-      fakeCapture();
+  function restartAuto() {
+    if (timer) clearInterval(timer);
+    if (!reduceMotion) {
+      timer = setInterval(function () { show(current + 1); }, DURATION);
     }
+  }
+
+  steps.forEach(function (s, k) {
+    s.querySelector('button').addEventListener('click', function () {
+      show(k);
+      restartAuto();
+    });
   });
 
-  fakeCapture(); // seed the strip so it never looks empty
+  // pause while the visitor is interacting with the mock gallery
+  var gallery = document.querySelector('.mock-gallery');
+  if (gallery) {
+    gallery.addEventListener('pointerenter', function () { if (timer) clearInterval(timer); });
+    gallery.addEventListener('pointerleave', restartAuto);
+  }
+
+  show(0);
+  restartAuto();
+
+  /* ---------- mock gallery copy micro-interaction ---------- */
+  document.querySelectorAll('.mock-mini-copy').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      btn.classList.add('ok');
+      setTimeout(function () { btn.classList.remove('ok'); }, 1200);
+    });
+  });
 
   /* ---------- copy SHA hashes ---------- */
   document.querySelectorAll('.hash').forEach(function (btn) {
