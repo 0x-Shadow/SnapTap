@@ -3,7 +3,7 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- scroll reveals ---------- */
+  /* ---------- scroll reveals: rise + deblur ---------- */
   var revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {
     var io = new IntersectionObserver(function (entries) {
@@ -19,41 +19,40 @@
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
-  /* ---------- hero glow follows the mouse (cheap rAF) ---------- */
-  var hero = document.querySelector('.hero');
-  var glow = document.querySelector('.hero-glow');
-  if (hero && glow && !reduceMotion) {
-    var tx = 0, cx = 0, raf = null;
-    hero.addEventListener('mousemove', function (e) {
-      var r = hero.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 120;
-      if (!raf) raf = requestAnimationFrame(tick);
-    });
-    function tick() {
-      cx += (tx - cx) * 0.08;
-      glow.style.transform = 'translateX(calc(-50% + ' + cx.toFixed(1) + 'px))';
-      if (Math.abs(tx - cx) > 0.2) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        raf = null;
-      }
+  /* ---------- demo stage drifts gently with scroll ---------- */
+  var stage = document.getElementById('demoStage');
+  if (stage && !reduceMotion) {
+    var scheduled = false;
+    function parallax() {
+      scheduled = false;
+      var r = stage.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      var offset = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      var y = Math.max(-1, Math.min(1, offset)) * -34;
+      var s = 1 - Math.min(0.05, Math.abs(offset) * 0.05);
+      stage.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(3) + ')';
     }
+    window.addEventListener('scroll', function () {
+      if (!scheduled) {
+        scheduled = true;
+        requestAnimationFrame(parallax);
+      }
+    }, { passive: true });
+    parallax();
   }
 
   /* ---------- interactive capture demo ---------- */
-  var stage = document.getElementById('demoStage');
   var flash = document.getElementById('demoFlash');
   var captureBtn = document.getElementById('demoCapture');
   var strip = document.getElementById('demoStrip');
   var toast = document.getElementById('demoToast');
 
-  // Mock "screen contents" — abstract gradients so every fake shot differs
   var shots = [
-    'linear-gradient(135deg, #1b2a4a 0%, #0e1526 60%, #101014 100%)',
-    'linear-gradient(135deg, #2a1b3d 0%, #171226 60%, #101014 100%)',
-    'linear-gradient(135deg, #123a34 0%, #0e2422 60%, #101014 100%)',
-    'linear-gradient(135deg, #4a2c14 0%, #26180e 60%, #101014 100%)',
-    'linear-gradient(135deg, #3d1b26 0%, #230f16 60%, #101014 100%)'
+    'linear-gradient(135deg, #1b2a4a 0%, #0e1526 60%, #0b0b0e 100%)',
+    'linear-gradient(135deg, #2a1b3d 0%, #171226 60%, #0b0b0e 100%)',
+    'linear-gradient(135deg, #123a34 0%, #0e2422 60%, #0b0b0e 100%)',
+    'linear-gradient(135deg, #4a2c14 0%, #26180e 60%, #0b0b0e 100%)',
+    'linear-gradient(135deg, #3d1b26 0%, #230f16 60%, #0b0b0e 100%)'
   ];
   var shotIndex = 0;
   var shotCount = 0;
@@ -64,17 +63,14 @@
     if (busy) return; // throttle like the real app
     busy = true;
 
-    // 1. shutter flash
     flash.classList.remove('go');
     void flash.offsetWidth;
     flash.classList.add('go');
 
-    // 2. button pulse (mirrors the real pulse ring)
     captureBtn.classList.remove('firing');
     void captureBtn.offsetWidth;
     captureBtn.classList.add('firing');
 
-    // 3. thumbnail flies into the strip
     setTimeout(function () {
       shotCount++;
       var thumb = document.createElement('div');
@@ -86,7 +82,6 @@
       while (strip.children.length > 4) strip.removeChild(strip.lastChild);
       shotIndex++;
 
-      // 4. copied toast
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1600);
@@ -104,8 +99,7 @@
     }
   });
 
-  // seed the strip so it never looks empty
-  fakeCapture();
+  fakeCapture(); // seed the strip so it never looks empty
 
   /* ---------- copy SHA hashes ---------- */
   document.querySelectorAll('.hash').forEach(function (btn) {
@@ -133,7 +127,4 @@
       }
     });
   });
-
-  /* ---------- footer year ---------- */
-  document.getElementById('year').textContent = new Date().getFullYear();
 })();

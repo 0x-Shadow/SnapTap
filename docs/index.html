@@ -6,164 +6,149 @@
   <title>SnapTap — Screenshot at the speed of thought</title>
   <meta name="description" content="SnapTap is a lightweight floating screenshot tool for Windows. Press Alt+S, paste anywhere. Free, offline, open source.">
   <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header class="nav">
-    <a class="brand" href="#top">
-      <img src="assets/logo.png" alt="SnapTap logo" width="30" height="30">
-      <span>SnapTap</span>
-    </a>
-    <nav class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#shortcuts">Shortcuts</a>
-      <a href="#download">Download</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="https://github.com/0x-Shadow/SnapTap" target="_blank" rel="noopener">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.15c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
-      GitHub
-    </a>
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <img src="assets/logo.png" alt="SnapTap logo" width="22" height="22">
+        <span>SnapTap</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#demo">Demo</a>
+        <a href="#features">Features</a>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="#download">Download</a>
+      </nav>
+      <a class="nav-cta" href="https://github.com/0x-Shadow/SnapTap" target="_blank" rel="noopener">GitHub</a>
+    </div>
   </header>
 
   <main id="top">
 
     <!-- ============ HERO ============ -->
     <section class="hero">
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <p class="eyebrow reveal">v2.1.1 — free &amp; open source</p>
-          <h1 class="reveal" data-delay="1">Screenshot at the<br>speed of thought.</h1>
-          <p class="lede reveal" data-delay="2">
-            Two tiny buttons float on the edge of your screen.
-            Hit <kbd>Alt</kbd> + <kbd>S</kbd> — the shot is saved
-            <em>and</em> on your clipboard before you lift your finger.
-            Just paste.
-          </p>
-          <div class="hero-cta reveal" data-delay="3">
-            <a class="btn btn-primary" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap.Setup.2.1.1.exe">
-              Download for Windows
-            </a>
-            <a class="btn btn-secondary" href="#download">Portable .exe</a>
-          </div>
-          <p class="hero-meta reveal mono" data-delay="4">Windows 10/11 &middot; ~79 MB &middot; MIT license &middot; 100% offline</p>
+      <div class="wrap hero-center">
+        <img class="hero-logo reveal" src="assets/logo.png" alt="SnapTap logo" width="88" height="88">
+        <p class="eyebrow reveal" data-delay="1">SnapTap 2.1.1</p>
+        <h1 class="reveal" data-delay="2">Screenshot at the<br>speed of thought.</h1>
+        <p class="sub reveal" data-delay="3">
+          Two tiny buttons float on the edge of your screen.
+          Hit <kbd>Alt</kbd> + <kbd>S</kbd> — the shot is saved
+          and on your clipboard before you lift your finger.
+        </p>
+        <div class="hero-cta reveal" data-delay="4">
+          <a class="pill pill-primary" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap.Setup.2.1.1.exe">Download for Windows</a>
+          <a class="link-more" href="#demo">See it in action <span aria-hidden="true">&gt;</span></a>
         </div>
-
-        <!-- Interactive demo: the app, recreated in CSS -->
-        <div class="hero-demo reveal" data-delay="2">
-          <div class="demo-stage" id="demoStage">
-            <div class="demo-flash" id="demoFlash" aria-hidden="true"></div>
-            <div class="demo-buttons">
-              <button class="demo-btn" id="demoCapture" title="Take screenshot">
-                <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                <span class="demo-pulse" aria-hidden="true"></span>
-              </button>
-              <button class="demo-btn" title="Open gallery">
-                <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              </button>
-            </div>
-            <div class="demo-strip" id="demoStrip" aria-live="polite"></div>
-            <div class="demo-toast mono" id="demoToast">copied to clipboard</div>
-          </div>
-          <p class="demo-hint mono">live mock — click the camera or press <kbd>S</kbd></p>
-        </div>
+        <p class="footnote reveal" data-delay="4">Free. MIT-licensed. Windows 10/11. 100% offline — your screenshots never leave your disk.</p>
       </div>
     </section>
 
-    <!-- ============ TICKER ============ -->
-    <div class="ticker" aria-hidden="true">
-      <div class="ticker-track">
-        <span>Alt+S — capture</span><i>•</i><span>Alt+G — gallery</span><i>•</i><span>Ctrl+C — copy</span><i>•</i><span>auto-save to Pictures/SnapTap</span><i>•</i><span>full-resolution</span><i>•</i><span>multi-monitor</span><i>•</i>
-        <span>Alt+S — capture</span><i>•</i><span>Alt+G — gallery</span><i>•</i><span>Ctrl+C — copy</span><i>•</i><span>auto-save to Pictures/SnapTap</span><i>•</i><span>full-resolution</span><i>•</i><span>multi-monitor</span><i>•</i>
+    <!-- ============ LIVE DEMO ============ -->
+    <section class="chapter" id="demo">
+      <div class="wrap demo-center">
+        <div class="demo-stage reveal" id="demoStage">
+          <div class="demo-flash" id="demoFlash" aria-hidden="true"></div>
+          <div class="demo-buttons">
+            <button class="demo-btn" id="demoCapture" title="Take screenshot">
+              <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="demo-pulse" aria-hidden="true"></span>
+            </button>
+            <button class="demo-btn" title="Open gallery">
+              <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+          </div>
+          <div class="demo-strip" id="demoStrip" aria-live="polite"></div>
+          <div class="demo-toast" id="demoToast">Copied to clipboard</div>
+        </div>
+        <p class="caption reveal">A live mock of the app, recreated in code. Click the camera — or press <kbd>S</kbd>.</p>
       </div>
-    </div>
+    </section>
 
     <!-- ============ FEATURES ============ -->
-    <section class="section" id="features">
-      <p class="eyebrow reveal">01 — Why SnapTap</p>
-      <h2 class="reveal" data-delay="1">Built for people who<br>screenshot fifty times a day.</h2>
-      <div class="grid">
-        <article class="card reveal">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <h3>Capture → paste. Nothing between.</h3>
-          <p>Every screenshot lands on your clipboard the instant it's taken. No editor opening, no extra clicks, no hunting for the file.</p>
-        </article>
-        <article class="card reveal" data-delay="1">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <h3>A gallery that respects you</h3>
-          <p>Everything auto-saves to <span class="mono">Pictures/SnapTap/</span>. Click any thumbnail to enlarge it, copy it again, or delete it.</p>
-        </article>
-        <article class="card reveal" data-delay="2">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          <h3>Pixel-perfect when it counts</h3>
-          <p>A tray toggle switches captures to native display resolution. Crisp text in docs, bug reports, and design handoffs.</p>
-        </article>
-        <article class="card reveal">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="9" height="12" rx="1"/><rect x="13" y="8" width="9" height="12" rx="1"/></svg>
-          <h3>Speaks multi-monitor</h3>
-          <p>Captures the display under your cursor by default — or lock to one monitor from the tray. Unplugging a screen never breaks it.</p>
-        </article>
-        <article class="card reveal" data-delay="1">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          <h3>Spam-proofed</h3>
-          <p>Throttled captures, a reused preview window, tiny IPC payloads, and auto-recovery if a renderer ever dies. Mash the button — it holds.</p>
-        </article>
-        <article class="card reveal" data-delay="2">
-          <svg viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
-          <h3>Yours, fully</h3>
-          <p>MIT-licensed, zero network calls, zero telemetry. Your screenshots never leave your disk. Audit the code on GitHub.</p>
-        </article>
+    <section class="chapter" id="features">
+      <div class="wrap">
+        <p class="eyebrow reveal">Why SnapTap</p>
+        <h2 class="reveal" data-delay="1">Made for people who screenshot fifty&nbsp;times&nbsp;a&nbsp;day.</h2>
+        <div class="tiles">
+          <article class="tile reveal">
+            <h3>Capture. Paste. Done.</h3>
+            <p>Every screenshot lands on your clipboard the instant it's taken. No editor popping open, no extra clicks, no hunting for the file.</p>
+          </article>
+          <article class="tile reveal" data-delay="1">
+            <h3>A gallery that respects you.</h3>
+            <p>Everything auto-saves to Pictures/SnapTap. Click any thumbnail to enlarge it, copy it again, or delete it.</p>
+          </article>
+          <article class="tile reveal" data-delay="2">
+            <h3>Pixel-perfect when it counts.</h3>
+            <p>A tray toggle switches captures to native display resolution. Crisp text in docs, bug reports, and handoffs.</p>
+          </article>
+          <article class="tile reveal">
+            <h3>Speaks multi-monitor.</h3>
+            <p>Captures the display under your cursor — or lock to one monitor from the tray. Unplugging a screen never breaks it.</p>
+          </article>
+          <article class="tile reveal" data-delay="1">
+            <h3>Spam-proofed.</h3>
+            <p>Throttled captures, a reused preview window, tiny IPC payloads, auto-recovery if a renderer dies. Mash the button — it holds.</p>
+          </article>
+          <article class="tile reveal" data-delay="2">
+            <h3>Yours, fully.</h3>
+            <p>MIT-licensed, zero network calls, zero telemetry. Audit every line on GitHub.</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <!-- ============ SHORTCUTS ============ -->
-    <section class="section" id="shortcuts">
-      <p class="eyebrow reveal">02 — Muscle memory</p>
-      <h2 class="reveal" data-delay="1">Four shortcuts.<br>That's the whole manual.</h2>
-      <div class="keys reveal" data-delay="2">
-        <div class="key-row"><span class="key-desc">Take screenshot <small>saves + copies</small></span><span class="keys-kbd"><kbd>Alt</kbd><kbd>S</kbd></span></div>
-        <div class="key-row"><span class="key-desc">Open gallery</span><span class="keys-kbd"><kbd>Alt</kbd><kbd>G</kbd></span></div>
-        <div class="key-row"><span class="key-desc">Copy current shot <small>in preview</small></span><span class="keys-kbd"><kbd>Ctrl</kbd><kbd>C</kbd></span></div>
-        <div class="key-row"><span class="key-desc">Close any popup</span><span class="keys-kbd"><kbd>Esc</kbd></span></div>
+    <!-- ============ SHORTCUTS (light chapter) ============ -->
+    <section class="chapter chapter-light" id="shortcuts">
+      <div class="wrap">
+        <p class="eyebrow reveal">Shortcuts</p>
+        <h2 class="reveal" data-delay="1">Four shortcuts.<br>That's the whole manual.</h2>
+        <div class="spec reveal" data-delay="2">
+          <div class="spec-row"><span>Take screenshot <small>Saves a copy and puts it on your clipboard</small></span><span class="spec-keys"><kbd>Alt</kbd><kbd>S</kbd></span></div>
+          <div class="spec-row"><span>Open gallery</span><span class="spec-keys"><kbd>Alt</kbd><kbd>G</kbd></span></div>
+          <div class="spec-row"><span>Copy the current shot <small>While the preview is open</small></span><span class="spec-keys"><kbd>Ctrl</kbd><kbd>C</kbd></span></div>
+          <div class="spec-row"><span>Close any popup</span><span class="spec-keys"><kbd>Esc</kbd></span></div>
+        </div>
+        <p class="footnote dark reveal">Shortcuts work globally — from any app, any game, anywhere.</p>
       </div>
     </section>
 
     <!-- ============ DOWNLOAD ============ -->
-    <section class="section" id="download">
-      <p class="eyebrow reveal">03 — Get it</p>
-      <h2 class="reveal" data-delay="1">Free forever.<br>No account, no installer nagging.</h2>
-      <div class="dl-grid">
-        <article class="dl-card reveal">
-          <p class="mono dl-tag">recommended</p>
-          <h3>Installer</h3>
-          <p class="dl-meta mono">v2.1.1 &middot; 78.8 MB &middot; .exe</p>
-          <a class="btn btn-primary btn-block" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap.Setup.2.1.1.exe">Download installer</a>
-          <button class="hash mono" data-hash="aa25e07c2b588c87b77e4ff9347264d4d87b3abd5c2aed1218d2b95a55afa4a8" title="Click to copy full SHA-256">sha256: aa25e07c…afa4a8</button>
-        </article>
-        <article class="dl-card reveal" data-delay="1">
-          <p class="mono dl-tag">no install</p>
-          <h3>Portable</h3>
-          <p class="dl-meta mono">v2.1.1 &middot; 78.5 MB &middot; .exe</p>
-          <a class="btn btn-secondary btn-block" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap-2.1.1-portable.exe">Download portable</a>
-          <button class="hash mono" data-hash="4d4be62b0fde3f4fdd0b20af1132139dd3621c01d4c2f800721b7b572097dc2f" title="Click to copy full SHA-256">sha256: 4d4be62b…097dc2f</button>
-        </article>
+    <section class="chapter" id="download">
+      <div class="wrap dl-center">
+        <p class="eyebrow reveal">Get SnapTap</p>
+        <h2 class="reveal" data-delay="1">Free forever.</h2>
+        <p class="sub reveal" data-delay="2">No account. No installer nagging. Pick your flavor.</p>
+        <div class="dl-row reveal" data-delay="3">
+          <div class="dl-option">
+            <a class="pill pill-primary" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap.Setup.2.1.1.exe">Download installer</a>
+            <p class="mono dl-meta">v2.1.1 · 78.8 MB</p>
+            <button class="hash mono" data-hash="aa25e07c2b588c87b77e4ff9347264d4d87b3abd5c2aed1218d2b95a55afa4a8" title="Click to copy full SHA-256">SHA-256: aa25e07c…afa4a8</button>
+          </div>
+          <div class="dl-option">
+            <a class="pill pill-outline" href="https://github.com/0x-Shadow/SnapTap/releases/download/v2.1.1/SnapTap-2.1.1-portable.exe">Download portable</a>
+            <p class="mono dl-meta">v2.1.1 · 78.5 MB · no install</p>
+            <button class="hash mono" data-hash="4d4be62b0fde3f4fdd0b20af1132139dd3621c01d4c2f800721b7b572097dc2f" title="Click to copy full SHA-256">SHA-256: 4d4be62b…097dc2f</button>
+          </div>
+        </div>
+        <p class="footnote reveal">Windows SmartScreen may flag the unsigned build — choose <em>More info → Run anyway</em>. Prefer building it yourself? <a href="https://github.com/0x-Shadow/SnapTap#build-from-source">Three commands.</a></p>
       </div>
-      <p class="dl-note reveal">Windows SmartScreen may flag the unsigned build — click <em>More info → Run anyway</em>. Building from source? <a href="https://github.com/0x-Shadow/SnapTap#build-from-source">Three commands.</a></p>
     </section>
 
   </main>
 
   <footer>
-    <div class="foot-inner">
-      <a class="brand" href="#top">
-        <img src="assets/logo.png" alt="SnapTap logo" width="24" height="24">
-        <span>SnapTap</span>
-      </a>
-      <p class="mono">MIT &middot; <span id="year">2026</span> &middot; <a href="https://github.com/0x-Shadow/SnapTap">GitHub</a> &middot; <a href="https://github.com/0x-Shadow/SnapTap/releases">Releases</a></p>
+    <div class="wrap foot">
+      <div class="foot-links">
+        <a href="https://github.com/0x-Shadow/SnapTap">GitHub</a>
+        <a href="https://github.com/0x-Shadow/SnapTap/releases">Releases</a>
+        <a href="https://github.com/0x-Shadow/SnapTap/issues">Report an issue</a>
+      </div>
+      <p class="footnote">Copyright © 2026 SnapTap. MIT License. SnapTap is an independent open-source project, not affiliated with Apple Inc.</p>
     </div>
   </footer>
 
