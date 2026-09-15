@@ -3,7 +3,7 @@
   "version": "2.1.1",
   "description": "Lightweight floating screenshot tool for Windows. Capture your screen with Alt+S, copy to clipboard instantly, and browse your gallery with Alt+G.",
   "main": "main.js",
-  "author": "nikol",
+  "author": "0x-Shadow",
   "license": "MIT",
   "homepage": "https://github.com/0x-Shadow/SnapTap",
   "repository": {
